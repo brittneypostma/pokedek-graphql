@@ -7,26 +7,36 @@ const typeDefs = gql`
       number: Int
       hp: Int
       abilities: [Ability]
-      weaknesses: [PokemonType]
+      # weaknesses: [PokemonType]
+
+      # TYPES
+      # decimal: Float
+      # trueOrFalse: Boolean
     }
+
+    type Ability {
+      id: ID!
+      name: String!
+      short_effect: String
+      effect: String
+    }
+
+    # enum comes back as string
+
+    # enum Status {
+    #   USED
+    #   UNUSED
+    #   DEAD
+    # }
 
     # type PokemonType {
     #   id: ID!
     #   name: String!
     # }
 
-    # type Ability {
-    #   id: ID!
-    #   name: String!
-    #   short_effect: String
-    #   effect: String
-    # }
-
     type Query {
       pokemon: [Pokemon]
     }
-
-
 `
 
 const pokemon = [
@@ -53,3 +63,7 @@ const resolvers = {
     }
   }
 }
+
+const server = new ApolloServer({ typeDefs, resolvers })
+
+server.listen().then(({ url }) => console.log(`Server started at ${url}`))
