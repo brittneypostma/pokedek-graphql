@@ -1,6 +1,9 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { GraphQLScalarType } = require("graphql")
+const { Kind, parseValue } = require("graphql/language")
 
 const typeDefs = gql`
+# scalar Date
     type Pokemon {
       id: ID!
       name: String!
@@ -12,6 +15,7 @@ const typeDefs = gql`
       # TYPES
       # decimal: Float
       # trueOrFalse: Boolean
+      # date: Date
     }
 
     type Ability {
@@ -72,6 +76,24 @@ const resolvers = {
       return foundPokemon
     }
   }
+  // Date: new GraphQLScalarType({
+  //   name: "Date",
+  //   description: "it's a date",
+  //   parseValue(value) {
+  //     // value from the client
+  //     return new Date(value)
+  //   },
+  //   serialize(value) {
+  //     // value sent to client from server
+  //     return value.getTime()
+  //   },
+  //   parseLiteral(ast) {
+  //     if (ast.kind === Kind.Int) {
+  //       return new Date(ast.value)
+  //     }
+  //     return null
+  //   }
+  // })
 }
 
 const server = new ApolloServer({
