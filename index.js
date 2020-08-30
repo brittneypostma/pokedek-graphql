@@ -21,6 +21,8 @@ const typeDefs = gql`
       effect: String
     }
 
+    # ! means its a non-nullable field
+
     # enum comes back as string
 
     # enum Status {
@@ -36,20 +38,21 @@ const typeDefs = gql`
 
     type Query {
       pokemon: [Pokemon]
+      pokemonOne(id: ID): Pokemon
     }
 `
 
 const pokemon = [
   {
-    id: 1,
+    id: "1",
     name: "Pikachu",
   },
   {
-    id: 2,
+    id: "2",
     name: "Bulbasaur",
   },
   {
-    id: 3,
+    id: "3",
     name: "Charmander",
   }
 
@@ -60,6 +63,13 @@ const resolvers = {
     // data returned from Query defined in schema
     pokemon: () => {
       return pokemon
+    },
+    // id destructured off args
+    pokemonOne: (obj, { id }, context, info) => {
+      const foundPokemon = pokemon.find(pokemon => {
+        return pokemon.id === id
+      })
+      return foundPokemon
     }
   }
 }
