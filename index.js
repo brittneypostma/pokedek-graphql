@@ -10,6 +10,7 @@ const typeDefs = gql`
       number: Int
       hp: Int
       abilities: [Ability]
+      types: [PokemonType]
       # weaknesses: [PokemonType]
 
       # TYPES
@@ -35,10 +36,10 @@ const typeDefs = gql`
     #   DEAD
     # }
 
-    # type PokemonType {
-    #   id: ID!
-    #   name: String!
-    # }
+    type PokemonType {
+      id: ID!
+      name: String!
+    }
 
     type Query {
       pokemon: [Pokemon]
@@ -46,18 +47,106 @@ const typeDefs = gql`
     }
 `
 
+const Types = [
+  {
+    id: "a",
+    name: "electric"
+  },
+  {
+    id: "b",
+    name: "earth",
+  },
+  {
+    id: "c",
+    name: "water"
+  },
+  {
+    id: "d",
+    name: "fire"
+  },
+  {
+    id: "e",
+    name: "physical"
+  },
+  {
+    id: "f",
+    name: "grass"
+  },
+  {
+    id: "g",
+    name: "normal"
+  },
+  {
+    id: "h",
+    name: "fighting"
+  },
+  {
+    id: "i",
+    name: "flying"
+  },
+  {
+    id: "j",
+    name: "poison"
+  },
+  {
+    id: "k",
+    name: "ground"
+  },
+  {
+    id: "l",
+    name: "rock"
+  },
+  {
+    id: "m",
+    name: "bug"
+  },
+  {
+    id: "n",
+    name: "steel"
+  },
+  {
+    id: "o",
+    name: "psychic"
+  },
+  {
+    id: "p",
+    name: "ice"
+  },
+  {
+    id: "q",
+    name: "dragon"
+  },
+  {
+    id: "r",
+    name: "dark"
+  },
+  {
+    id: "s",
+    name: "fairy"
+  }
+]
+
 const pokemon = [
   {
     id: "1",
     name: "Pikachu",
+    types: [
+      { id: "a" }
+    ]
   },
   {
     id: "2",
     name: "Bulbasaur",
+    types: [
+      { id: "f" }
+    ]
   },
   {
     id: "3",
     name: "Charmander",
+    types: [
+      { id: "d" }
+    ]
   }
 
 ]
@@ -75,7 +164,25 @@ const resolvers = {
       })
       return foundPokemon
     }
+  },
+
+  Pokemon: {
+    types: (obj, arg, context) => {
+      const typeIds = obj.types.map(type => type.id)
+      const filter = types.filter(type => {
+        return typeIds.includes(type)
+      })
+      return filter
+    }
   }
+
+  //   (obj, arg, context) => {
+  //   console.log({ obj })
+  //   return {
+  //     id: "a",
+  //     name: "electric"
+  //   }
+  // }
   // Date: new GraphQLScalarType({
   //   name: "Date",
   //   description: "it's a date",
