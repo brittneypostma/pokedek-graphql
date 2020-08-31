@@ -1,7 +1,10 @@
 const { ApolloServer, gql } = require('apollo-server')
 const { GraphQLScalarType } = require("graphql")
 const { Kind } = require("graphql/language")
+const mongoose = require('mongoose')
 
+mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
+const db = mongoose.connection
 
 const types = [
   {
@@ -259,4 +262,12 @@ const server = new ApolloServer({
   }
 })
 
-server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => console.log(`Server started at ${url}`))
+db.on("error", console.error.bind(console, "connection error:"))
+db.once("open", function () {
+  console.log("")
+  server
+    .listen({
+      port: process.env.PORT || 4000
+    })
+    .then(({ url }) => console.log(`Server started at ${url}`))
+})
