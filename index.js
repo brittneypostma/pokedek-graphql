@@ -107,12 +107,19 @@ const pokemon = [
 
 ]
 
+// gql`` parses your string into an AST
 const typeDefs = gql`
 # scalar Date
 
     # type Ability {
     #   id: ID!
     #   name: String!
+    # }
+
+    # can't define on Schema, has to be placed in the playground before the query
+    # fragment Meta on Pokemon {
+    #   number
+    #   hp
     # }
 
     type PokemonType {
