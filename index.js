@@ -1,53 +1,9 @@
 const { ApolloServer, gql } = require('apollo-server')
 const { GraphQLScalarType } = require("graphql")
-const { Kind, parseValue } = require("graphql/language")
+const { Kind } = require("graphql/language")
 
-const typeDefs = gql`
-# scalar Date
-    type Pokemon {
-      id: ID!
-      name: String!
-      number: Int
-      hp: Int
-      abilities: [Ability]
-      types: [PokemonType]
-      # weaknesses: [PokemonType]
 
-      # TYPES
-      # decimal: Float
-      # trueOrFalse: Boolean
-      # date: Date
-    }
-
-    type Ability {
-      id: ID!
-      name: String!
-      short_effect: String
-      effect: String
-    }
-
-    # ! means its a non-nullable field
-
-    # enum comes back as string
-
-    # enum Status {
-    #   USED
-    #   UNUSED
-    #   DEAD
-    # }
-
-    type PokemonType {
-      id: ID!
-      name: String!
-    }
-
-    type Query {
-      pokemon: [Pokemon]
-      pokemonOne(id: ID): Pokemon
-    }
-`
-
-const Types = [
+const types = [
   {
     id: "a",
     name: "electric"
@@ -151,6 +107,56 @@ const pokemon = [
 
 ]
 
+const typeDefs = gql`
+# scalar Date
+
+    # type Ability {
+    #   id: ID!
+    #   name: String!
+    # }
+
+    type PokemonType {
+      id: ID!
+      name: String!
+    }
+
+    type Pokemon {
+      id: ID!
+      name: String!
+      number: Int
+      hp: Int
+      types: [PokemonType]
+      # abilities: [Ability]
+      # weaknesses: [PokemonType]
+
+      # TYPES
+      # decimal: Float
+      # trueOrFalse: Boolean
+      # date: Date
+    }
+
+    # ! means its a non-nullable field
+
+    # enum comes back as string
+
+    # enum Status {
+    #   USED
+    #   UNUSED
+    #   DEAD
+    # }
+
+
+    type Query {
+      pokemon: [Pokemon]
+      pokemonOne(id: ID): Pokemon
+    }
+
+    type Mutation {
+      addPokemon(name: String, id: ID): [Pokemon]
+    }
+`
+
+
 const resolvers = {
   Query: {
     // data returned from Query defined in schema
@@ -167,12 +173,27 @@ const resolvers = {
   },
 
   Pokemon: {
-    types: (obj, arg, context) => {
+    types: (obj, args, context) => {
+      // match id to db id
       const typeIds = obj.types.map(type => type.id)
-      const filter = types.filter(type => {
-        return typeIds.includes(type)
+      // filter db for included ids
+      const filteredTypes = types.filter(type => {
+        return typeIds.includes(type.id)
       })
-      return filter
+      return filteredTypes
+    }
+  },
+
+  Mutation: {
+    addPokemon: (obj, { id, name }, context) => {
+      const updatedPokemon = [
+        ...pokemon,
+        {
+          id,
+          name
+        }
+      ]
+      return updatedPokemon
     }
   }
 
