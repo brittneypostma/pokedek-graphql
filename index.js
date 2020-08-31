@@ -151,8 +151,20 @@ const typeDefs = gql`
       pokemonOne(id: ID): Pokemon
     }
 
+    input TypeInput {
+      id: ID
+    }
+
+    input PokemonInput {
+      id: ID
+      name: String
+      number: Int
+      hp: Int
+      types: [TypeInput]
+    }
+
     type Mutation {
-      addPokemon(name: String, id: ID): [Pokemon]
+      addPokemon(newPokemon: PokemonInput): [Pokemon]
     }
 `
 
@@ -185,15 +197,16 @@ const resolvers = {
   },
 
   Mutation: {
-    addPokemon: (obj, { id, name }, context) => {
-      const updatedPokemon = [
-        ...pokemon,
-        {
-          id,
-          name
-        }
-      ]
-      return updatedPokemon
+    addPokemon: (obj, { newPokemon }, { userId }) => {
+      // console.log({ context })
+      if (userId) {
+        const updatedPokemon = [
+          ...pokemon,
+          newPokemon
+        ]
+        return updatedPokemon
+      }
+      return pokemon
     }
   }
 
@@ -228,7 +241,15 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   introspection: true,
-  playground: true
+  playground: true,
+  context: ({ req }) => {
+    const fakeUser = {
+      userId: "iAmAUser"
+    }
+    return {
+      ...fakeUser
+    }
+  }
 })
 
 server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => console.log(`Server started at ${url}`))
