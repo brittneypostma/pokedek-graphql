@@ -3,7 +3,7 @@ const { GraphQLScalarType } = require("graphql")
 const { Kind } = require("graphql/language")
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
+mongoose.connect('mongodb+srv://test:test@cluster0.0cyjv.mongodb.net/<dbname>?retryWrites=true&w=majority', { useNewUrlParser: true })
 const db = mongoose.connection
 
 const types = [
