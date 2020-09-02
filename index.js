@@ -6,6 +6,15 @@ const mongoose = require('mongoose')
 mongoose.connect('mongodb+srv://test:test@cluster0.0cyjv.mongodb.net/<dbname>?retryWrites=true&w=majority', { useNewUrlParser: true })
 const db = mongoose.connection
 
+const pokemonSchema = new mongoose.Schema({
+  name: String,
+  number: Number,
+  hp: Number,
+  types: [String]
+})
+
+const Pokemon = mongoose.model('Pokemon', pokemonSchema)
+
 const types = [
   {
     id: "a",
@@ -183,7 +192,8 @@ const resolvers = {
   Query: {
     // data returned from Query defined in schema
     pokemon: () => {
-      return pokemon
+      const allPokemon = Pokemon.find()
+      return allPokemon
     },
     // id destructured off args
     pokemonOne: (obj, { id }, context, info) => {
@@ -210,11 +220,15 @@ const resolvers = {
     addPokemon: (obj, { newPokemon }, { userId }) => {
       // console.log({ context })
       if (userId) {
-        const updatedPokemon = [
-          ...pokemon,
-          newPokemon
-        ]
-        return updatedPokemon
+        const updatedPokemon = Pokemon.create({
+          ...newPokemon
+        })
+        return [updatedPokemon]
+        // const updatedPokemon = [
+        //   ...pokemon,
+        //   newPokemon
+        // ]
+        // return updatedPokemon
       }
       return pokemon
     }
@@ -264,7 +278,7 @@ const server = new ApolloServer({
 
 db.on("error", console.error.bind(console, "connection error:"))
 db.once("open", function () {
-  console.log("")
+  console.log("✔ Database Connected")
   server
     .listen({
       port: process.env.PORT || 4000
